@@ -1,6 +1,9 @@
+**한국어** | [English](./README.md)
+
 # Lab 02: GY-521 (MPU-6050) 6축 IMU (듀얼코어, IPM, SSD1306)
 
-> Zephyr_multisensor 시리즈 두 번째 랩. ESP32-S3-DevKitC-1 기준, 실기 검증 완료.
+> `zephyr_sensor` 시리즈 두 번째 랩. ESP32-S3-DevKitC-1 기준, 실기 검증 완료.
+> 실기 검증 중 겪은 이슈와 해결 과정: [트러블슈팅 문서](./doc/02_GY521_MPU6050_TROUBLESHOOTING_kr.md)
 
 ## 1. 개요
 
@@ -80,7 +83,7 @@ I2C0(core0 전담), 디스플레이는 I2C1(core1 전담)으로 물리적으로 
   (제품 스펙 문서는 InvenSense가 TDK에 인수되며 공식 링크가 자주 바뀌므로,
   "MPU-6000 and MPU-6050 Product Specification Revision 3.4" 문서명으로
   검색해 최신 미러를 찾는 것을 권장)
-- 참고로 사용자가 공유한 국내 판매처 페이지: [디바이스마트 GY-521 상품페이지](https://www.devicemart.co.kr/goods/view?no=1247052)
+- 참고 구매처(국내): [디바이스마트 GY-521 상품페이지](https://www.devicemart.co.kr/goods/view?no=1247052)
 
 ### SSD1306 (128x64 OLED, core1 전담)
 - Lab 01과 동일한 커스텀 I2C 드라이버(`ssd1306_display.c`) 재사용 - ESP32
@@ -157,7 +160,7 @@ west flash
 ```
 첫 줄의 `Failed to read chip ID.` 에러는 배선 안 된 0x69 노드의 초기화가
 커널 부팅 단계에서 자동 실행되며 실패한 것으로, **정상적으로 예상되는
-동작**입니다 (실기로 확인됨 - 아래 트러블슈팅 문서 참고). 거슬리면 MPU6050
+동작**입니다 (실기로 확인됨 - [트러블슈팅 문서](./doc/02_GY521_MPU6050_TROUBLESHOOTING_kr.md) 참고). 거슬리면 MPU6050
 모듈 로그 레벨을 낮춰 조용히 만들 수 있습니다.
 
 ### core1 화면 (실기 확인됨)

@@ -1,3 +1,5 @@
+**한국어** | [English](./03_HW664_LIS3DH_TROUBLESHOOTING_en.md) · [← 랩 README](../README_kr.md)
+
 # Lab 03 트러블슈팅 (HW-664, 듀얼코어/IPM)
 
 실기 검증 과정에서 실제로 겪은 이슈와 해결책만 정리했습니다.
@@ -79,7 +81,7 @@ Lab 02의 MPU6050 0x68/0x69 자동 감지 때와 동일한 정상 패턴 - 그 �
 
 ## 참고: SparkFun LIS3DH 라이브러리와의 레지스터 맵 크로스체크
 
-칩 정체를 LIS3DSH로 오인했던 시점에 사용자가 공유한
+칩 정체를 LIS3DSH로 오인했던 시점에 참고한
 [SparkFun_LIS3DH_Arduino_Library](https://github.com/sparkfun/SparkFun_LIS3DH_Arduino_Library)
 를 검토하며 확인한 내용 (결과적으로 실제 칩과 정확히 일치하는 레퍼런스였음):
 

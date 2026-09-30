@@ -1,3 +1,5 @@
+**한국어** | [English](./02_GY521_MPU6050_TROUBLESHOOTING_en.md) · [← 랩 README](../README_kr.md)
+
 # Lab 02 트러블슈팅 (GY-521 MPU-6050, 듀얼코어/IPM)
 
 실기 검증 과정에서 실제로 확인한 내용만 정리했습니다.

@@ -1,4 +1,9 @@
-# [Lab 04] ESP32-S3 Zephyr RTOS Power Mode Lab (HW-664 + SSD1306, Dual-Core AMP)
+[한국어](./README_kr.md) | **English**
+
+# Lab 04: ESP32-S3 Zephyr RTOS Power Mode Lab (HW-664 + SSD1306, Dual-Core AMP)
+
+> Fourth lab in the `zephyr_sensor` series. Built and verified on real hardware with the ESP32-S3-DevKitC-1.
+> Issues hit during bring-up and how they were solved: [Troubleshooting](./doc/04_ESP32S3_PowerMode_TROUBLESHOOTING_en.md)
 
 This document is a hands-on guide that combines Zephyr RTOS power management concepts with inter-core communication (IPM) on the ESP32-S3's dual-core (AMP) architecture, turning them into a tangible, low-power scenario you can actually observe on real hardware. This document is self-contained: anything already covered in other labs in this series is re-explained here as needed so you can follow along from start to finish using only this file.
 
@@ -9,7 +14,7 @@ This document is a hands-on guide that combines Zephyr RTOS power management con
 - **Understand precisely how the ESP32-S3's hardware power modes relate to the Zephyr RTOS PM subsystem**, and get a hands-on feel for the gap between "what the chip's datasheet claims" and "what Zephyr can actually use today."
 - **Low-power synchronization across an AMP layout**: learn how PRO_CPU (core0) and APP_CPU (core1) share power-state information over IPM (Inter-Processor Messaging).
 - **Hardware power gating**: implement cutting an external peripheral's (the OLED's) power rail entirely via GPIO, rather than merely blanking its display.
-- **Sensor-interrupt-driven wake-up**: implement a scenario where a sharp change (a threshold crossing) on the accelerometer (HW-664 / LIS3DH) automatically brings the system back out of a low-power mode.
+- **Sensor-event-driven wake-up**: implement a scenario where a sharp change (a threshold crossing) detected by polling the accelerometer (HW-664 / LIS3DH) automatically brings the system back out of a low-power mode.
 
 ---
 
@@ -20,7 +25,7 @@ This document is a hands-on guide that combines Zephyr RTOS power management con
 | Part | Notes |
 | --- | --- |
 | ESP32-S3-DevKitC-1 | The base board used throughout this series |
-| HW-664 accelerometer module | The module's silkscreen/listing says LIS3DSH, but the chip actually on the board is **LIS3DH** (see section 4.1 below) |
+| HW-664 accelerometer module | The module's silkscreen/listing says LIS3DSH, but the chip actually on the board is **LIS3DH** (see [Lab 03](../03_HW664_LIS3DH/README.md)) |
 | SSD1306 128x64 OLED (I2C) | 4-pin (VCC/GND/SDA/SCL) module |
 | A switch for OLED power gating | A P-MOSFET (high-side) or a small load-switch IC is recommended — see section 5.3 |
 | Breadboard / jumper wires | |
@@ -28,8 +33,8 @@ This document is a hands-on guide that combines Zephyr RTOS power management con
 ### 2.2 Build Environment
 
 - **west**: every build command in this document assumes west.
-- **Zephyr IDE (VS Code extension)**: simply open your west workspace as-is; no extra setup is needed just for this lab. The existing configuration under `.vscode/` can be reused as-is.
-- Zephyr RTOS v4.4+ (west-based), ESP-IDF toolchain (for HAL purposes)
+- **Zephyr IDE (VS Code extension)**: simply open your west workspace as-is; no extra setup is needed just for this lab.
+- Zephyr RTOS v4.4+ (west-based), Zephyr SDK (Xtensa toolchain), and the Espressif HAL binaries fetched with `west blobs fetch hal_espressif`
 
 ---
 
@@ -41,7 +46,7 @@ This document is a hands-on guide that combines Zephyr RTOS power management con
 | I2C0 SCL | GPIO9 | HW-664 SCL | core0 | |
 | I2C1 SDA | GPIO4 | SSD1306 SDA | core1 | |
 | I2C1 SCL | GPIO5 | SSD1306 SCL | core1 | |
-| OLED power gate | GPIO0 pin 6 | Power switch control input | core1 | HIGH = OLED powered ON, LOW = OFF |
+| OLED power gate | GPIO6 (`&gpio0` pin 6) | Power switch control input | core1 | HIGH = OLED powered ON, LOW = OFF |
 | Boot button | GPIO0 (onboard) | Onboard BOOT switch | core0 | Active-LOW, used for mode cycling |
 | VCC / GND | 3.3V / GND | Common to all modules | - | |
 | HW-664 CS | Not connected | - | - | Leaving CS unconnected is normal for this module |
@@ -68,7 +73,7 @@ The chip datasheet lists four modes, but **the only one Zephyr's ESP32-S3 SoC PM
 
 Deep-Sleep can be reached at the hardware level via `sys_poweroff()` combined with `esp_sleep_enable_timer_wakeup()`, but this combination has a known, reported upstream issue on both ESP32 and ESP32-S3 that causes watchdog-reset loops or outright boot failure (zephyr-rtos/zephyr#86193, closed as "not planned"). On top of that, this lab's ultra-low-power mode still needs to **keep reading the sensor once a second**, and a genuine Deep-Sleep powers off the CPU/RAM entirely — without a ULP co-processor, no code at all can run in the meantime.
 
-**This lab does not use `CONFIG_PM` (Zephyr System Power Management) at all.** We did get real Light-Sleep working on real hardware with `CONFIG_PM=y` during development, but confirmed that on this particular Zephyr snapshot (`v4.4.0-13070-g6d1d551f6080`), the ESP32-S3 SoC PM driver does not yet coexist reliably with this specific board/driver combination. The full attempt history, root causes, and hardware logs are written up in a separate document, [`04_ESP32S3_PowerMode_TROUBLESHOOTING_en.md`](./04_ESP32S3_PowerMode_TROUBLESHOOTING_en.md) — if you want to try reviving real Light-Sleep yourself, start there. Modem-Sleep is likewise out of scope, since this lab never touches a radio at all.
+**This lab does not use `CONFIG_PM` (Zephyr System Power Management) at all.** We did get real Light-Sleep working on real hardware with `CONFIG_PM=y` during development, but confirmed that on this particular Zephyr snapshot (`v4.4.0-13070-g6d1d551f6080`), the ESP32-S3 SoC PM driver does not yet coexist reliably with this specific board/driver combination. The full attempt history, root causes, and hardware logs are written up in a separate document, [`doc/04_ESP32S3_PowerMode_TROUBLESHOOTING_en.md`](./doc/04_ESP32S3_PowerMode_TROUBLESHOOTING_en.md) — if you want to try reviving real Light-Sleep yourself, start there. Modem-Sleep is likewise out of scope, since this lab never touches a radio at all.
 
 In other words, this lab's three "low-power modes" are not implemented through the Zephyr PM subsystem — they are **a policy implemented entirely at the application level**: a combination of power gating (cutting the OLED's VCC), changing the sampling interval, and a software reset on trigger. The point of this lab is less "how deeply asleep can the chip actually get" and more "how well can the application throttle its own peripherals and activity based on context." Sections 5–6 below define this policy in detail.
 
@@ -149,9 +154,9 @@ On the devicetree side, this pin **must be declared as a child node of the `gpio
 
 ```text
 04_ESP32S3_PowerMode_Lab/
+├── README_kr.md                                    (Korean)
+├── README.md                                       (English, this document)
 ├── doc/
-│   ├── 04_ESP32S3_PowerMode_KR.md                  (Korean, this lab's main doc)
-│   ├── 04_ESP32S3_PowerMode_EN.md                  (English, this document)
 │   ├── 04_ESP32S3_PowerMode_TROUBLESHOOTING_kr.md  (Korean troubleshooting notes)
 │   └── 04_ESP32S3_PowerMode_TROUBLESHOOTING_en.md  (English troubleshooting notes)
 └── lab/
@@ -214,4 +219,4 @@ If you're using the Zephyr IDE, just create one build target with the same setti
 - **OLED power-gating wiring**: see section 5.3 — a MOSFET or load-switch is recommended over driving VCC directly from the GPIO.
 - **ISR context**: both the Boot button's GPIO callback and the IPM callback run in interrupt context. If you modify this code, be careful never to call `k_sleep()` or any other blocking API directly from inside them (this lab's code only sets a flag or pushes to a message queue from the callbacks — actual processing always happens in the main loop or a dedicated thread).
 - **Adding a plain GPIO output pin to a devicetree overlay**: a control-only pin with no real driver behind it, like `oled-pwr`, must be declared as a child node of the `gpio-leds` binding (see section 5.3) — a `gpios` property with no `compatible` will build fine as an overlay, but breaks the C build the moment `GPIO_DT_SPEC_GET()` is used on it.
-- The build/runtime issues encountered while validating this lab on real hardware (particularly the `CONFIG_PM` trial-and-error) and how they were diagnosed and resolved are written up in a separate document, [`04_ESP32S3_PowerMode_TROUBLESHOOTING_en.md`](./04_ESP32S3_PowerMode_TROUBLESHOOTING_en.md).
+- The build/runtime issues encountered while validating this lab on real hardware (particularly the `CONFIG_PM` trial-and-error) and how they were diagnosed and resolved are written up in a separate document, [`doc/04_ESP32S3_PowerMode_TROUBLESHOOTING_en.md`](./doc/04_ESP32S3_PowerMode_TROUBLESHOOTING_en.md).

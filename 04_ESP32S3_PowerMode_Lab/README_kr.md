@@ -1,4 +1,9 @@
-# [Lab 04] ESP32-S3 Zephyr RTOS Power Mode 실습 (HW-664 + SSD1306, 듀얼코어 AMP)
+**한국어** | [English](./README.md)
+
+# Lab 04: ESP32-S3 Zephyr RTOS Power Mode 실습 (HW-664 + SSD1306, 듀얼코어 AMP)
+
+> `zephyr_sensor` 시리즈 네 번째 랩. ESP32-S3-DevKitC-1 기준, 실기 검증 완료.
+> 실기 검증 중 겪은 이슈와 해결 과정: [트러블슈팅 문서](./doc/04_ESP32S3_PowerMode_TROUBLESHOOTING_kr.md)
 
 이 문서는 ESP32-S3의 듀얼코어(AMP) 환경에서 Zephyr RTOS의 전원 관리 개념을 코어 간 통신(IPM)과 결합하여, 실제로 손에 잡히는 저전력 시나리오로 구현하는 실습 가이드입니다. 이 문서만 보고도 처음부터 끝까지 따라 할 수 있도록, 다른 실습에서 이미 다룬 내용도 필요한 만큼 다시 설명합니다.
 
@@ -9,7 +14,7 @@
 - **ESP32-S3 하드웨어 전력 모드와 Zephyr RTOS PM subsystem의 관계를 정확히 이해**하고, 실습을 통해 "Zephyr에서 실제로 쓸 수 있는 것"과 "칩 데이터시트 상의 이론"의 차이를 체감합니다.
 - **AMP 구조에서의 저전력 동기화**: PRO_CPU(core0)와 APP_CPU(core1)가 IPM(Inter-Processor Messaging)으로 전원 상태를 공유하는 방법을 익힙니다.
 - **하드웨어 전원 차단(Power Gating)**: GPIO로 외장 페리페럴(OLED)의 전원 자체를 끊는 방법을 구현합니다.
-- **센서 인터럽트 기반 Wake-up**: 가속도 센서(HW-664 / LIS3DH)의 급격한 변화(Threshold)를 감지해 절전 모드에서 자동으로 복귀하는 시나리오를 구현합니다.
+- **센서 이벤트 기반 Wake-up**: 가속도 센서(HW-664 / LIS3DH)를 폴링하며 급격한 변화(Threshold)를 감지해 절전 모드에서 자동으로 복귀하는 시나리오를 구현합니다.
 
 ---
 
@@ -20,7 +25,7 @@
 | 부품 | 비고 |
 | --- | --- |
 | ESP32-S3-DevKitC-1 | 이 시리즈의 기본 보드 |
-| HW-664 가속도 센서 모듈 | 모듈 표기는 LIS3DSH이지만, 실제 칩은 **LIS3DH**입니다 (아래 4.1절 참고) |
+| HW-664 가속도 센서 모듈 | 모듈 표기는 LIS3DSH이지만, 실제 칩은 **LIS3DH**입니다 ([Lab 03](../03_HW664_LIS3DH/README_kr.md) 참고) |
 | SSD1306 128x64 OLED (I2C) | 4핀(VCC/GND/SDA/SCL) 모듈 |
 | OLED 전원 게이팅용 스위치 | P-MOSFET(하이사이드) 또는 로드스위치 IC 권장 - 5.3절 참고 |
 | 브레드보드 / 점퍼선 | |
@@ -28,8 +33,8 @@
 ### 2.2 빌드 환경
 
 - **west**: 이 문서의 모든 빌드 명령은 west 기준입니다.
-- **Zephyr IDE (VS Code 확장)**: west 워크스페이스를 그대로 열면 되고, 이 실습만을 위한 별도 설정은 필요 없습니다. `.vscode/` 폴더에 있는 기존 설정을 그대로 사용하시면 됩니다.
-- Zephyr RTOS v4.4+ (west 기반), ESP-IDF 툴체인 (HAL 용도)
+- **Zephyr IDE (VS Code 확장)**: west 워크스페이스를 그대로 열면 되고, 이 실습만을 위한 별도 설정은 필요 없습니다.
+- Zephyr RTOS v4.4+ (west 기반), Zephyr SDK (Xtensa 툴체인), `west blobs fetch hal_espressif`로 받은 Espressif HAL 바이너리
 
 ---
 
@@ -41,7 +46,7 @@
 | I2C0 SCL | GPIO9 | HW-664 SCL | core0 | |
 | I2C1 SDA | GPIO4 | SSD1306 SDA | core1 | |
 | I2C1 SCL | GPIO5 | SSD1306 SCL | core1 | |
-| OLED 전원 게이팅 | GPIO0 pin 6 | 전원 스위치 제어 입력 | core1 | HIGH = OLED 전원 ON, LOW = OFF |
+| OLED 전원 게이팅 | GPIO6 (`&gpio0` pin 6) | 전원 스위치 제어 입력 | core1 | HIGH = OLED 전원 ON, LOW = OFF |
 | Boot 버튼 | GPIO0 (보드 내장) | 온보드 BOOT 스위치 | core0 | Active-LOW, 모드 전환용 |
 | VCC / GND | 3.3V / GND | 전체 모듈 공통 | - | |
 | HW-664 CS | 미연결 | - | - | 이 모듈은 CS 미연결이 정상 |
@@ -68,7 +73,7 @@ OLED 전원 게이팅 핀과 Boot 버튼 둘 다 물리적으로는 `gpio0` 컨�
 
 Deep-Sleep은 `sys_poweroff()` + `esp_sleep_enable_timer_wakeup()` 조합으로 하드웨어 수준까지는 접근할 수 있지만, 이 조합은 ESP32/ESP32-S3에서 watchdog reset 루프나 부팅 실패를 일으키는 것으로 보고된 알려진 상위(upstream) 이슈가 있습니다(zephyr-rtos/zephyr#86193, "not planned"으로 closed). 게다가 이 실습의 초절전 모드는 **1초 주기로 센서를 계속 읽어야 하는데**, 진짜 Deep-Sleep은 CPU/RAM 전원이 완전히 꺼지므로 ULP 코프로세서 없이는 그 사이에 아무 코드도 실행할 수 없습니다.
 
-**이 실습은 `CONFIG_PM`(Zephyr System Power Management) 자체를 사용하지 않습니다.** 실기에서 `CONFIG_PM=y`로 Light-Sleep을 실제로 동작시켜 봤지만, 이 Zephyr 스냅샷(`v4.4.0-13070-g6d1d551f6080`)에서 ESP32-S3 SoC PM 드라이버가 이 보드/드라이버 조합과 아직 안정적으로 맞물리지 않는 것을 확인했습니다 - 자세한 시도/원인/실기 로그는 별도 문서 [`04_ESP32S3_PowerMode_TROUBLESHOOTING_kr.md`](./04_ESP32S3_PowerMode_TROUBLESHOOTING_kr.md)에 정리해 두었으니, Light-Sleep을 직접 살려보고 싶다면 그 문서부터 읽어보시길 권합니다. Modem-Sleep도 무선을 전혀 쓰지 않는 이 실습에서는 애초에 의미가 없어 다루지 않습니다.
+**이 실습은 `CONFIG_PM`(Zephyr System Power Management) 자체를 사용하지 않습니다.** 실기에서 `CONFIG_PM=y`로 Light-Sleep을 실제로 동작시켜 봤지만, 이 Zephyr 스냅샷(`v4.4.0-13070-g6d1d551f6080`)에서 ESP32-S3 SoC PM 드라이버가 이 보드/드라이버 조합과 아직 안정적으로 맞물리지 않는 것을 확인했습니다 - 자세한 시도/원인/실기 로그는 별도 문서 [`doc/04_ESP32S3_PowerMode_TROUBLESHOOTING_kr.md`](./doc/04_ESP32S3_PowerMode_TROUBLESHOOTING_kr.md)에 정리해 두었으니, Light-Sleep을 직접 살려보고 싶다면 그 문서부터 읽어보시길 권합니다. Modem-Sleep도 무선을 전혀 쓰지 않는 이 실습에서는 애초에 의미가 없어 다루지 않습니다.
 
 즉 이 실습의 3단계 절전 "모드"는 Zephyr PM subsystem이 아니라, **앱 레벨에서 직접 구현한 정책**입니다 - 전원 게이팅(OLED VCC 차단), 샘플링 주기 변경, 트리거 시 소프트웨어 리셋을 조합한 것으로, "칩이 실제로 얼마나 절전 상태에 들어가는가"보다는 "애플리케이션이 상황에 맞게 주변장치/동작 빈도를 얼마나 잘 조절하는가"를 보여주는 실습입니다. 아래 5~6절에서 이 정책을 정의합니다.
 
@@ -149,9 +154,9 @@ devicetree 쪽에서는 이 핀을 **반드시 `gpio-leds` 바인딩의 자식 �
 
 ```text
 04_ESP32S3_PowerMode_Lab/
+├── README_kr.md                                    (한국어, 이 문서)
+├── README.md                                       (영어)
 ├── doc/
-│   ├── 04_ESP32S3_PowerMode_KR.md                  (한국어, 이 문서)
-│   ├── 04_ESP32S3_PowerMode_EN.md                  (영어)
 │   ├── 04_ESP32S3_PowerMode_TROUBLESHOOTING_kr.md  (한국어 트러블슈팅)
 │   └── 04_ESP32S3_PowerMode_TROUBLESHOOTING_en.md  (영어 트러블슈팅)
 └── lab/
@@ -214,4 +219,4 @@ Zephyr IDE를 쓴다면, 위 west 명령과 동일한 빌드 설정(보드: `esp
 - **OLED 전원 게이팅 배선**: 5.3절 참고 - GPIO 직결보다 MOSFET/로드스위치 사용을 권장합니다.
 - **ISR 컨텍스트 주의**: Boot 버튼의 GPIO 콜백, IPM 콜백 모두 인터럽트 컨텍스트에서 실행되므로, 코드를 수정할 때 그 안에서 `k_sleep()`이나 블로킹 API를 직접 호출하지 않도록 주의합니다 (이 실습 코드는 콜백에서 플래그/메시지큐만 세팅하고, 실제 처리는 메인 루프/전용 스레드에서 하도록 구성했습니다).
 - **devicetree에 순수 GPIO 출력 핀을 추가할 때**: `oled-pwr`처럼 표준 드라이버가 없는 제어용 핀은 반드시 `gpio-leds` 바인딩의 자식 노드로 선언해야 합니다 (5.3절 참고) - `compatible` 없이 `gpios` 프로퍼티만 넣으면 오버레이는 빌드되지만 C 코드에서 `GPIO_DT_SPEC_GET()`을 쓰는 순간 빌드가 깨집니다.
-- 이 실습을 실기에서 검증하며 마주친 빌드/런타임 이슈(특히 `CONFIG_PM` 관련 시행착오)와 그 원인/해결 과정은 별도 문서 [`04_ESP32S3_PowerMode_TROUBLESHOOTING_kr.md`](./04_ESP32S3_PowerMode_TROUBLESHOOTING_kr.md)에 정리했습니다.
+- 이 실습을 실기에서 검증하며 마주친 빌드/런타임 이슈(특히 `CONFIG_PM` 관련 시행착오)와 그 원인/해결 과정은 별도 문서 [`doc/04_ESP32S3_PowerMode_TROUBLESHOOTING_kr.md`](./doc/04_ESP32S3_PowerMode_TROUBLESHOOTING_kr.md)에 정리했습니다.

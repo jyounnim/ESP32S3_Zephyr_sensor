@@ -1,7 +1,10 @@
+[한국어](./README_kr.md) | **English**
+
 # Lab 01: AHT20 + BMP280 Multi-Sensor (Dual-Core, IPM, SSD1306)
 
-> First lab in the Zephyr_multisensor series. Built and verified on real hardware
-> with the ESP32-S3-DevKitC-1.
+> First lab in the `zephyr_sensor` series. Built and verified on real
+> hardware with the ESP32-S3-DevKitC-1.
+> Issues hit during bring-up and how they were solved: [Troubleshooting](./doc/01_AHT20_BMP280_MultiSensor_TROUBLESHOOTING_en.md)
 
 ## 1. Overview
 

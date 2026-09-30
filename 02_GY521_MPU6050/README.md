@@ -1,7 +1,10 @@
+[한국어](./README_kr.md) | **English**
+
 # Lab 02: GY-521 (MPU-6050) 6-Axis IMU (Dual-Core, IPM, SSD1306)
 
-> Second lab in the Zephyr_multisensor series. Built and verified on real
+> Second lab in the `zephyr_sensor` series. Built and verified on real
 > hardware with the ESP32-S3-DevKitC-1.
+> Issues hit during bring-up and how they were solved: [Troubleshooting](./doc/02_GY521_MPU6050_TROUBLESHOOTING_en.md)
 
 ## 1. Overview
 
@@ -97,7 +100,7 @@ core1).
   around since InvenSense's acquisition by TDK, so searching for
   "MPU-6000 and MPU-6050 Product Specification Revision 3.4" is a good
   way to find a current mirror)
-- For reference, the Korean retailer page shared during this project:
+- Reference retailer (Korea):
   [Devicemart GY-521 product page](https://www.devicemart.co.kr/goods/view?no=1247052)
 
 ### SSD1306 (128x64 OLED, owned exclusively by core1)
@@ -177,7 +180,7 @@ west flash
 ```
 The `Failed to read chip ID.` line comes from the unwired 0x69 node's
 init running automatically during kernel boot and failing - this is
-**expected, confirmed-normal behavior** (see the troubleshooting doc). If
+**expected, confirmed-normal behavior** (see the [troubleshooting doc](./doc/02_GY521_MPU6050_TROUBLESHOOTING_en.md)). If
 it bothers you, the MPU6050 module's log level can be lowered to quiet
 it.
 

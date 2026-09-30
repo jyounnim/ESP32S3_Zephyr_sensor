@@ -1,3 +1,5 @@
+**한국어** | [English](./README.md)
+
 # Zephyr Multi-Sensor 예제 시리즈 (ESP32-S3, 듀얼코어 + IPM)
 
 ESP32-S3-DevKitC-1 + Zephyr RTOS 기반으로, I2C 센서를 하나씩 새로 붙여가며
@@ -46,7 +48,8 @@ core0/core1은 완전히 독립된 두 이미지(AMP)이기 때문에, 같은 I2
   내부는 다음과 같이 통일돼 있습니다.
   ```
   NN_모듈명_칩명/
-  ├── doc/                                  설계 문서 + 트러블슈팅 문서 (KR/EN)
+  ├── README_kr.md / README.md             랩 설명 문서 (한국어 / 영어)
+  ├── doc/                                  트러블슈팅 문서 (_kr.md / _en.md)
   ├── lab/                                  메인 애플리케이션 (west build --sysbuild)
   │   ├── src/                              core0(procpu) 소스
   │   ├── remote/src/                       core1(appcpu) 소스
@@ -54,7 +57,7 @@ core0/core1은 완전히 독립된 두 이미지(AMP)이기 때문에, 같은 I2
   │   ├── remote/boards/*.overlay           core1 오버레이
   │   ├── sysbuild.cmake / sysbuild.conf
   │   └── prj.conf / remote/prj.conf
-  └── lab_tools/i2c0_scanner/               새 I2C 디바이스 주소 확인용 진단 도구
+  └── lab_tools/i2c0_scanner/               새 I2C 디바이스 주소 확인용 진단 도구 (Lab 01~03)
   ```
 - **빌드**:
   ```
@@ -65,12 +68,15 @@ core0/core1은 완전히 독립된 두 이미지(AMP)이기 때문에, 같은 I2
   기본적으로 MCUboot를 같이 빌드하려 시도합니다. 이 시리즈는 OTA와 무관한
   순수 2-이미지(procpu+appcpu) 구성이므로, 각 랩의 `lab/sysbuild.conf`에
   `SB_CONFIG_BOOTLOADER_NONE=y`를 명시해 끕니다.
-- **IPM 채널**: 채널 2 사용 (0/1은 플랫폼 예약, 2/3이 애플리케이션 여유분).
+- **IPM 채널**: Lab 01~03은 모든 스냅샷을 ID 2로 전송 (0/1은 플랫폼 예약,
+  2/3이 애플리케이션 여유분). Lab 04는 메시지 종류가 여러 개라 payload 안의
+  명령 코드(`ipm_msg_t.cmd`)로 구분합니다.
 - **새 센서 배선 시**: 오버레이에 주소를 하드코딩하기 전에
   `lab_tools/i2c0_scanner`로 실제 응답 주소부터 확인합니다 - datasheet
   기본 주소와 실제 모듈의 결선이 다른 경우가 흔합니다.
 - **문서 작성 흐름**: 실기 검증 전에는 한글 문서만 작성하고, 실기 검증이
-  끝나면 문서를 정리하면서 영문 버전을 함께 만듭니다.
+  끝나면 문서를 정리하면서 영문 버전을 함께 만듭니다. 모든 문서 상단에
+  한/영 전환 링크가 있습니다.
 
 ## 진행 중인 랩 목록
 
@@ -79,11 +85,13 @@ core0/core1은 완전히 독립된 두 이미지(AMP)이기 때문에, 같은 I2
 
 | # | 폴더 | 모듈 / 칩 | 센서 종류 | 상태 |
 | --- | --- | --- | --- | --- |
-| 01 | [`01_AHT20_BMP280_MultiSensor`](./01_AHT20_BMP280_MultiSensor) | AHT20 + BMP280 | 온습도 + 기압 (센서 2개가 I2C0 버스 하나를 공유) | ✅ 실기 검증 완료 |
-| 02 | [`02_GY521_MPU6050`](./02_GY521_MPU6050) | GY-521 (MPU-6050) | 6축 IMU (3축 가속도 + 3축 자이로 + 온도) | ✅ 실기 검증 완료 |
-| 03 | [`03_HW664_LIS3DH`](./03_HW664_LIS3DH) | HW-664 (실제 칩: LIS3DH — 판매 페이지엔 LIS3DSH로 표기돼 있었으나 WHO_AM_I로 정정 확인) | 3축 가속도계 | ✅ 실기 검증 완료 |
+| 01 | [`01_AHT20_BMP280_MultiSensor`](./01_AHT20_BMP280_MultiSensor/README_kr.md) | AHT20 + BMP280 | 온습도 + 기압 (센서 2개가 I2C0 버스 하나를 공유) | ✅ 실기 검증 완료 |
+| 02 | [`02_GY521_MPU6050`](./02_GY521_MPU6050/README_kr.md) | GY-521 (MPU-6050) | 6축 IMU (3축 가속도 + 3축 자이로 + 온도) | ✅ 실기 검증 완료 |
+| 03 | [`03_HW664_LIS3DH`](./03_HW664_LIS3DH/README_kr.md) | HW-664 (실제 칩: LIS3DH — 판매 페이지엔 LIS3DSH로 표기돼 있었으나 WHO_AM_I로 정정 확인) | 3축 가속도계 | ✅ 실기 검증 완료 |
+| 04 | [`04_ESP32S3_PowerMode_Lab`](./04_ESP32S3_PowerMode_Lab/README_kr.md) | HW-664 (LIS3DH) + SSD1306 전원 게이팅 | 전력 모드: core0 = 상시 센싱(AON), core1 = 디스플레이 전원 제어 (Normal / Sleep / Ultra-Sleep) | ✅ 실기 검증 완료 |
 
-각 랩의 자세한 설계/배선/트러블슈팅은 `NN_.../doc/` 안의 문서를 참고하세요.
+각 랩 폴더의 `README_kr.md`에 설계/배선/빌드/예상 결과가 있고, 트러블슈팅
+문서는 각 랩의 `doc/` 폴더에 있습니다.
 
 ## 새 랩을 시작할 때 체크리스트
 

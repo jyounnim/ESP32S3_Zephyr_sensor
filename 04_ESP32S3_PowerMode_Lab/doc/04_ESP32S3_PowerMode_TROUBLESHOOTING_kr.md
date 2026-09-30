@@ -1,8 +1,10 @@
-# [Troubleshooting] Lab 04: ESP32-S3 Power Mode - CONFIG_PM 시행착오 기록
+**한국어** | [English](./04_ESP32S3_PowerMode_TROUBLESHOOTING_en.md) · [← 랩 README](../README_kr.md)
 
-이 문서는 Lab 04 (`04_ESP32S3_PowerMode_KR.md`)를 실제 하드웨어(ESP32-S3 DevKitC-1)에서 검증하는 과정에서 만난 빌드 오류·런타임 크래시와, 각각의 원인 분석 및 최종적으로 `CONFIG_PM=n`(소프트웨어 정책 방식)으로 안정화하기까지의 전체 과정을 정리한 것입니다.
+# Lab 04 트러블슈팅 (ESP32-S3 Power Mode) - CONFIG_PM 시행착오 기록
 
-수업 자료 본문(`04_ESP32S3_PowerMode_KR.md`)은 최종 안정화된 구조만 설명하고 있으므로, "왜 Zephyr의 `CONFIG_PM` 기반 실제 Light-Sleep을 쓰지 않고 소프트웨어 정책으로 구현했는지"가 궁금하다면 이 문서를 참고하시면 됩니다. 같은 문제를 만난 분들을 위한 디버깅 참고 자료이기도 합니다.
+이 문서는 [Lab 04](../README_kr.md)를 실제 하드웨어(ESP32-S3 DevKitC-1)에서 검증하는 과정에서 만난 빌드 오류·런타임 크래시와, 각각의 원인 분석 및 최종적으로 `CONFIG_PM=n`(소프트웨어 정책 방식)으로 안정화하기까지의 전체 과정을 정리한 것입니다.
+
+수업 자료 본문([README_kr.md](../README_kr.md))은 최종 안정화된 구조만 설명하고 있으므로, "왜 Zephyr의 `CONFIG_PM` 기반 실제 Light-Sleep을 쓰지 않고 소프트웨어 정책으로 구현했는지"가 궁금하다면 이 문서를 참고하시면 됩니다. 같은 문제를 만난 분들을 위한 디버깅 참고 자료이기도 합니다.
 
 > 환경: Zephyr `v4.4.0-13070-g6d1d551f6080`, board target `esp32s3_devkitc/esp32s3/procpu` / `.../appcpu`, `west build --sysbuild`
 

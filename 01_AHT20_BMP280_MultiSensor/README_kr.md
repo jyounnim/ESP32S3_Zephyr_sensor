@@ -1,6 +1,9 @@
+**한국어** | [English](./README.md)
+
 # Lab 01: AHT20 + BMP280 멀티센서 (듀얼코어, IPM, SSD1306)
 
-> Zephyr_multisensor 시리즈 첫 번째 랩. ESP32-S3-DevKitC-1 기준, 실기 검증 완료.
+> `zephyr_sensor` 시리즈 첫 번째 랩. ESP32-S3-DevKitC-1 기준, 실기 검증 완료.
+> 실기 검증 중 겪은 이슈와 해결 과정: [트러블슈팅 문서](./doc/01_AHT20_BMP280_MultiSensor_TROUBLESHOOTING_kr.md)
 
 ## 1. 개요
 

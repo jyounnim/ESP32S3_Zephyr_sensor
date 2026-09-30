@@ -1,3 +1,5 @@
+[한국어](./01_AHT20_BMP280_MultiSensor_TROUBLESHOOTING_kr.md) | **English** · [← Lab README](../README.md)
+
 # Lab 01 Troubleshooting (AHT20 + BMP280 MultiSensor, dual-core/IPM)
 
 Only the issues actually hit during real-hardware bring-up, with their

@@ -1,3 +1,5 @@
+[한국어](./02_GY521_MPU6050_TROUBLESHOOTING_kr.md) | **English** · [← Lab README](../README.md)
+
 # Lab 02 Troubleshooting (GY-521 MPU-6050, dual-core/IPM)
 
 Only what was actually confirmed during real-hardware bring-up is

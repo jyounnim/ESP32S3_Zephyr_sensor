@@ -1,8 +1,10 @@
-# [Troubleshooting] Lab 04: ESP32-S3 Power Mode - CONFIG_PM Trial-and-Error Log
+[한국어](./04_ESP32S3_PowerMode_TROUBLESHOOTING_kr.md) | **English** · [← Lab README](../README.md)
 
-This document records the build errors and runtime crashes encountered while validating Lab 04 (`04_ESP32S3_PowerMode_EN.md`) on real hardware (an ESP32-S3 DevKitC-1), the root-cause analysis behind each one, and the full path that led to stabilizing on `CONFIG_PM=n` (a software-only policy) as the final approach.
+# Lab 04 Troubleshooting (ESP32-S3 Power Mode) - CONFIG_PM Trial-and-Error Log
 
-The main lab document (`04_ESP32S3_PowerMode_EN.md`) only describes the final, stabilized structure. If you're curious why this lab doesn't use Zephyr's `CONFIG_PM`-based real Light-Sleep, this document explains why. It's also meant as a debugging reference for anyone who runs into the same issues.
+This document records the build errors and runtime crashes encountered while validating [Lab 04](../README.md) on real hardware (an ESP32-S3 DevKitC-1), the root-cause analysis behind each one, and the full path that led to stabilizing on `CONFIG_PM=n` (a software-only policy) as the final approach.
+
+The main lab document ([README.md](../README.md)) only describes the final, stabilized structure. If you're curious why this lab doesn't use Zephyr's `CONFIG_PM`-based real Light-Sleep, this document explains why. It's also meant as a debugging reference for anyone who runs into the same issues.
 
 > Environment: Zephyr `v4.4.0-13070-g6d1d551f6080`, board targets `esp32s3_devkitc/esp32s3/procpu` / `.../appcpu`, built with `west build --sysbuild`
 

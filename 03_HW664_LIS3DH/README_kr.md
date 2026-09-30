@@ -1,6 +1,9 @@
+**한국어** | [English](./README.md)
+
 # Lab 03: HW-664 (실제 칩은 LIS3DH) 3축 가속도계 (듀얼코어, IPM, SSD1306)
 
-> Zephyr_multisensor 시리즈 세 번째 랩. ESP32-S3-DevKitC-1 기준, 실기 검증 완료.
+> `zephyr_sensor` 시리즈 세 번째 랩. ESP32-S3-DevKitC-1 기준, 실기 검증 완료.
+> 실기 검증 중 겪은 이슈와 해결 과정: [트러블슈팅 문서](./doc/03_HW664_LIS3DH_TROUBLESHOOTING_kr.md)
 
 ## 1. 개요
 
@@ -71,12 +74,12 @@ I2C0(core0 전담), 디스플레이는 I2C1(core1 전담)으로 물리적으로 
   **devicetree compatible은 반드시 `"st,lis2dh"`를 쓸 것** - Zephyr 문서에는
   `"st,lis3dh"`라는 별도 바인딩 페이지도 있지만, 실제 드라이버는 그 문자열에
   반응하지 않아 디바이스 인스턴스가 안 생김(Zephyr GitHub 이슈 #31253로
-  확인된 알려진 이슈) - 자세한 경위는 트러블슈팅 문서 참고.
+  확인된 알려진 이슈) - 자세한 경위는 [트러블슈팅 문서](./doc/03_HW664_LIS3DH_TROUBLESHOOTING_kr.md) 참고.
 - 표준 `sensor_sample_fetch()`/`sensor_channel_get(SENSOR_CHAN_ACCEL_XYZ)`로
   m/s² 단위 가속도를 받아 g로 변환(÷9.80665)해 사용
 - 실기 부팅 로그로 ±2g 풀스케일(`fs=2`) 기본 설정 확인됨
 - **Datasheet**: [ST 공식 LIS3DH 데이터시트 PDF](https://www.st.com/resource/en/datasheet/lis3dh.pdf)
-- 참고로 사용자가 공유한 구매처: [알리익스프레스 HW-664 상품페이지](https://ko.aliexpress.com/item/4000116105737.html?gatewayAdapt=glo2kor)
+- 참고 구매처: [알리익스프레스 HW-664 상품페이지](https://ko.aliexpress.com/item/4000116105737.html?gatewayAdapt=glo2kor)
   (위에서 설명한 대로, 판매 페이지 표기와 실제 실장 칩이 다른 사례이니 참고)
 
 ### SSD1306 (128x64 OLED, core1 전담)

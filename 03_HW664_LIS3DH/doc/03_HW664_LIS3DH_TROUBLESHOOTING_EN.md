@@ -1,3 +1,5 @@
+[한국어](./03_HW664_LIS3DH_TROUBLESHOOTING_kr.md) | **English** · [← Lab README](../README.md)
+
 # Lab 03 Troubleshooting (HW-664, dual-core/IPM)
 
 Only the issues actually hit during real-hardware bring-up, with their
@@ -91,7 +93,7 @@ confirmed rendering correctly.
 
 While the chip was still misidentified as LIS3DSH, the
 [SparkFun_LIS3DH_Arduino_Library](https://github.com/sparkfun/SparkFun_LIS3DH_Arduino_Library)
-shared during this project was reviewed - which turned out to be an
+was reviewed as a reference - which turned out to be an
 exact match for the real chip, not just a loosely related reference:
 
 | Item | LIS3DH (SparkFun library) | For reference: LIS3DSH (the chip originally assumed) |

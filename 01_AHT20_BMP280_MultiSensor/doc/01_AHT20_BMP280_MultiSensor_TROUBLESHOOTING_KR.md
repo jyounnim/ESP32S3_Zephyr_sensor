@@ -1,3 +1,5 @@
+**한국어** | [English](./01_AHT20_BMP280_MultiSensor_TROUBLESHOOTING_en.md) · [← 랩 README](../README_kr.md)
+
 # Lab 01 트러블슈팅 (AHT20 + BMP280 MultiSensor, 듀얼코어/IPM)
 
 실기 검증 과정에서 실제로 겪은 이슈와 해결책만 정리했습니다.

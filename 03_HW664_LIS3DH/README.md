@@ -1,7 +1,10 @@
+[한국어](./README_kr.md) | **English**
+
 # Lab 03: HW-664 (actually an LIS3DH) 3-Axis Accelerometer (Dual-Core, IPM, SSD1306)
 
-> Third lab in the Zephyr_multisensor series. Built and verified on real
+> Third lab in the `zephyr_sensor` series. Built and verified on real
 > hardware with the ESP32-S3-DevKitC-1.
+> Issues hit during bring-up and how they were solved: [Troubleshooting](./doc/03_HW664_LIS3DH_TROUBLESHOOTING_en.md)
 
 ## 1. Overview
 
@@ -80,7 +83,7 @@ exclusively by core1).
   **The devicetree compatible must be `"st,lis2dh"`** - Zephyr's docs
   also list a separate `"st,lis3dh"` binding page, but the actual driver
   doesn't respond to that string, so no device gets instantiated (a
-  known, filed Zephyr issue, #31253) - see the troubleshooting doc for
+  known, filed Zephyr issue, #31253) - see the [troubleshooting doc](./doc/03_HW664_LIS3DH_TROUBLESHOOTING_en.md) for
   the full story.
 - Uses the standard `sensor_sample_fetch()`/
   `sensor_channel_get(SENSOR_CHAN_ACCEL_XYZ)` API, returning m/s^2,
@@ -88,7 +91,7 @@ exclusively by core1).
 - Confirmed on real hardware: default full-scale range is +-2g
   (`fs=2` in the boot log)
 - **Datasheet**: [Official ST LIS3DH datasheet (PDF)](https://www.st.com/resource/en/datasheet/lis3dh.pdf)
-- For reference, the retailer page shared during this project:
+- Reference retailer:
   [AliExpress HW-664 product page](https://ko.aliexpress.com/item/4000116105737.html?gatewayAdapt=glo2kor)
   (as noted above, a real example of the listing not matching the
   actual part inside)
