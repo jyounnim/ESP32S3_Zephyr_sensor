@@ -58,6 +58,7 @@ The display core shows `LINK: FAIL` if no message arrives for 3 seconds.
 | T (TX) | GPIO18 (UART1 RX) |
 | R (RX) | GPIO17 (UART1 TX) |
 | IO | unused |
+<img width="426" height="403" alt="image" src="https://github.com/user-attachments/assets/b89d22fb-7315-4452-b413-acd3d6d94fe1" />
 
 The onboard Boot button (GPIO0) is reused as-is (for triggering auto-threshold).
 
