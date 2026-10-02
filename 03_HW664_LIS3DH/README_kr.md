@@ -101,6 +101,8 @@ I2C0(core0 전담), 디스플레이는 I2C1(core1 전담)으로 물리적으로 
 | CS (선택, 이 모듈은 미연결도 정상) | - | HW-664 CS | - |
 | SDO/SA0 (선택, 미연결 시 이 모듈은 0x19) | GND(0x18) 또는 미연결/HIGH(0x19) | HW-664 SDO | - |
 
+<img width="417" height="439" alt="image" src="https://github.com/user-attachments/assets/7073958c-050b-4d56-94bc-024c62753417" />
+
 **Lab 01/02에서 얻은 관례 그대로 적용**: 새 I2C 디바이스는 배선 직후
 `lab_tools/i2c0_scanner`로 실제 응답 주소를 먼저 확인할 것 - 이번 랩에서는
 그렇게 확인한 값(0x19)이 애초에 칩 정체를 다시 파악하는 단서가 되기도 했음.
