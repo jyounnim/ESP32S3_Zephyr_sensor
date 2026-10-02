@@ -150,6 +150,8 @@ I2C0 and I2C1 are two completely separate physical buses. **Whenever you
 wire up a new I2C device, scan it with `lab_tools/i2c0_scanner` before
 putting an address in the overlay** - a module's actual SDO wiring often
 doesn't match the datasheet's default address.
+<img width="418" height="400" alt="image" src="https://github.com/user-attachments/assets/34211f0c-df69-49cc-8b80-483c390bbb0f" />
+
 
 ## 5. Building
 
