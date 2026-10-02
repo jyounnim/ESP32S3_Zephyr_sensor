@@ -67,6 +67,8 @@ Boot 버튼(GPIO0)은 보드 내장 버튼을 그대로 사용합니다(자동 t
 | SDA | GPIO4 (I2C1) |
 | SCL | GPIO5 (I2C1) |
 
+<img width="426" height="403" alt="image" src="https://github.com/user-attachments/assets/76a3621d-6bd8-421b-a7dd-c9e0946a1250" />
+
 - 두 장치 모두 3.3 V IO이므로 레벨 시프터가 필요 없습니다.
 - LD2402는 평균 50 mA를 소모합니다. DevKit 3V3 레일로 충분하지만, 가능하면 100 µF 디커플링 커패시터를 추가하십시오.
 - SSD1306 주소는 raw driver가 부팅 시 0x3C → 0x3D 순서로 자동 probe하므로 overlay에 따로 적지 않습니다.
