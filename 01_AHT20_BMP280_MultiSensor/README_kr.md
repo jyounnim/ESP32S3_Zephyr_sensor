@@ -128,6 +128,8 @@ I2C0과 I2C1은 물리적으로 완전히 분리된 버스입니다. **새 I2C �
 직후에는 오버레이에 주소를 넣기 전에 `lab_tools/i2c0_scanner`로 실제 응답
 주소를 먼저 확인**하는 것을 권장합니다 (datasheet 기본 주소와 실제 모듈의
 SDO 결선이 다른 경우가 흔함).
+<img width="418" height="400" alt="image" src="https://github.com/user-attachments/assets/6303848d-a7bd-4242-b047-df01ef3f1e87" />
+
 
 ## 5. 빌드 방법
 
