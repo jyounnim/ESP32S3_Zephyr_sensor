@@ -115,6 +115,8 @@ exclusively by core1).
 | CS (optional - unconnected works fine on this module) | - | HW-664 CS | - |
 | SDO/SA0 (optional - unconnected gives 0x19 on this module) | GND (0x18) or unconnected/HIGH (0x19) | HW-664 SDO | - |
 
+<img width="417" height="439" alt="image" src="https://github.com/user-attachments/assets/3bfaf0b0-b3ee-4b8a-8432-b320781ed0be" />
+
 
 **Lesson carried over from Lab 01/02**: after wiring up a new I2C
 device, scan it with `lab_tools/i2c0_scanner` before putting an address
