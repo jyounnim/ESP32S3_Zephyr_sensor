@@ -143,6 +143,8 @@ caveat as Lab 01).
 | I2C1 SCL | GPIO5 | SSD1306 SCL | core1 |
 | VCC / GND | 3.3V / GND | everything | - |
 | AD0 | GND (or unconnected) | GY-521 AD0 | - (pins the address to 0x68) |
+<img width="468" height="632" alt="image" src="https://github.com/user-attachments/assets/a274ad03-13f7-4d3c-8663-43e6294be06a" />
+
 
 **Lesson carried over from Lab 01**: after wiring up a new I2C device,
 scan it with `lab_tools/i2c0_scanner` before putting an address in the
