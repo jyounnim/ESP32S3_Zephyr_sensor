@@ -58,7 +58,6 @@ The display core shows `LINK: FAIL` if no message arrives for 3 seconds.
 | T (TX) | GPIO18 (UART1 RX) |
 | R (RX) | GPIO17 (UART1 TX) |
 | IO | unused |
-<img width="426" height="403" alt="image" src="https://github.com/user-attachments/assets/b89d22fb-7315-4452-b413-acd3d6d94fe1" />
 
 The onboard Boot button (GPIO0) is reused as-is (for triggering auto-threshold).
 
@@ -67,6 +66,8 @@ The onboard Boot button (GPIO0) is reused as-is (for triggering auto-threshold).
 | VCC / GND | 3V3 / GND |
 | SDA | GPIO4 (I2C1) |
 | SCL | GPIO5 (I2C1) |
+
+<img width="426" height="403" alt="image" src="https://github.com/user-attachments/assets/a34f5926-7712-48af-ac34-5452a479f6aa" />
 
 - Both devices are 3.3 V IO, so no level shifter is needed.
 - The LD2402 draws about 50 mA on average. The DevKit's 3V3 rail is sufficient, but adding a 100 µF decoupling capacitor is recommended if possible.
