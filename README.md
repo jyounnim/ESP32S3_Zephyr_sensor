@@ -97,6 +97,7 @@ sensor joins the lineup. The table below reflects progress so far.
 | 02 | [`02_GY521_MPU6050`](./02_GY521_MPU6050) | GY-521 (MPU-6050) | 6-axis IMU (3-axis accel + 3-axis gyro + temperature) | ✅ Verified on real hardware |
 | 03 | [`03_HW664_LIS3DH`](./03_HW664_LIS3DH) | HW-664 (actual chip: LIS3DH - the listing said LIS3DSH, corrected via WHO_AM_I) | 3-axis accelerometer | ✅ Verified on real hardware |
 | 04 | [`04_ESP32S3_PowerMode_Lab`](./04_ESP32S3_PowerMode_Lab) | HW-664 (LIS3DH) + SSD1306 power gating | Power modes: core0 = always-on sensing, core1 = display power control (Normal / Sleep / Ultra-Sleep) | ✅ Verified on real hardware |
+| 05 | [`05_HLKLD2402_Radar`](./05_HLKLD2402_Radar) | HLK-LD2402 (UART radar) + SSD1306 | Distance/presence/direction sensing, 16-gate energy bar graph display (core0 = AON radar parsing, core1 = display) | ✅ Verified on real hardware |
 
 Each lab folder's `README.md` covers design, wiring, build, and expected
 results; troubleshooting notes live under that lab's `doc/` folder.

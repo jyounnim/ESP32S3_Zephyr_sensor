@@ -1,0 +1,32 @@
+/*
+ * APP_CPU (display core) devicetree overlay.
+ *
+ * Same I2C1 setup as the hardware-verified multi-sensor AMP Lab 01:
+ *   GPIO4 = I2C1 SDA, GPIO5 = I2C1 SCL (not strapping / USB-JTAG pins)
+ * The SSD1306 is NOT declared as a devicetree node: the raw driver
+ * (src/ssd1306_display.c) probes 0x3C then 0x3D at runtime.
+ */
+#include <dt-bindings/pinctrl/esp32s3-pinctrl.h>
+#include <zephyr/dt-bindings/i2c/i2c.h>
+
+&pinctrl {
+	i2c1_default: i2c1_default {
+		group1 {
+			pinmux = <I2C1_SDA_GPIO4>, <I2C1_SCL_GPIO5>;
+			bias-pull-up;
+			drive-open-drain;
+			output-high;
+		};
+	};
+};
+
+&i2c1 {
+	status = "okay";
+	pinctrl-0 = <&i2c1_default>;
+	pinctrl-names = "default";
+	clock-frequency = <I2C_BITRATE_STANDARD>;
+};
+
+&ipm0 {
+	status = "okay";
+};

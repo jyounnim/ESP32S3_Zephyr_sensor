@@ -89,6 +89,7 @@ core0/core1은 완전히 독립된 두 이미지(AMP)이기 때문에, 같은 I2
 | 02 | [`02_GY521_MPU6050`](./02_GY521_MPU6050/README_kr.md) | GY-521 (MPU-6050) | 6축 IMU (3축 가속도 + 3축 자이로 + 온도) | ✅ 실기 검증 완료 |
 | 03 | [`03_HW664_LIS3DH`](./03_HW664_LIS3DH/README_kr.md) | HW-664 (실제 칩: LIS3DH — 판매 페이지엔 LIS3DSH로 표기돼 있었으나 WHO_AM_I로 정정 확인) | 3축 가속도계 | ✅ 실기 검증 완료 |
 | 04 | [`04_ESP32S3_PowerMode_Lab`](./04_ESP32S3_PowerMode_Lab/README_kr.md) | HW-664 (LIS3DH) + SSD1306 전원 게이팅 | 전력 모드: core0 = 상시 센싱(AON), core1 = 디스플레이 전원 제어 (Normal / Sleep / Ultra-Sleep) | ✅ 실기 검증 완료 |
+| 05 | [`05_HLKLD2402_Radar`](./05_HLKLD2402_Radar/README_kr.md) | HLK-LD2402 (UART 레이더) + SSD1306 | 거리/presence/방향 감지, 16-gate 에너지 바 그래프 디스플레이 (core0 = AON 레이더 파싱, core1 = 디스플레이) | ✅ 실기 검증 완료 |
 
 각 랩 폴더의 `README_kr.md`에 설계/배선/빌드/예상 결과가 있고, 트러블슈팅
 문서는 각 랩의 `doc/` 폴더에 있습니다.

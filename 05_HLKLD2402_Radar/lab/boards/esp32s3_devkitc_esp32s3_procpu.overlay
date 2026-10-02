@@ -1,0 +1,51 @@
+/*
+ * PRO_CPU (sensor core) devicetree overlay.
+ *
+ * LD2402 wiring (3.3 V logic on both sides - no level shifter):
+ *   ESP32-S3 GPIO17 (UART1 TX) -> LD2402 R (RX)
+ *   ESP32-S3 GPIO18 (UART1 RX) <- LD2402 T (TX)
+ *   3V3 -> LD2402 V, GND -> LD2402 G   (LD2402 IO pin unused)
+ *
+ * calib-button: onboard BOOT button (GPIO0, active low). Hold it 2 s to
+ * run the radar's automatic threshold generation (see sensor_main.c).
+ *
+ * The pin group is defined here with its own label (uart1_ld2402) so the
+ * lab does not depend on the board's default uart1_default contents.
+ */
+#include <dt-bindings/pinctrl/esp32s3-pinctrl.h>
+
+/ {
+	aliases {
+		ld2402-uart = &uart1;
+		calib-button = &button0;
+	};
+};
+
+&pinctrl {
+	uart1_ld2402: uart1_ld2402 {
+		group1 {
+			pinmux = <UART1_TX_GPIO17>;
+			output-high;
+		};
+		group2 {
+			pinmux = <UART1_RX_GPIO18>;
+			bias-pull-up;
+		};
+	};
+};
+
+&uart1 {
+	status = "okay";
+	current-speed = <115200>;
+	pinctrl-0 = <&uart1_ld2402>;
+	pinctrl-names = "default";
+};
+
+&ipm0 {
+	status = "okay";
+};
+
+/* I2C1 is owned by APP_CPU (display core) - keep it off on this core. */
+&i2c1 {
+	status = "disabled";
+};

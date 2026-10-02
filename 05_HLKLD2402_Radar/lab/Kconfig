@@ -1,0 +1,10 @@
+# Sensor-core application options.
+mainmenu "LD2402 sensor core"
+
+config LD2402_RX_POLLING
+	bool "Poll the LD2402 UART instead of using RX interrupts"
+	help
+	  Fallback for a UART whose RX interrupt is not delivered to this core.
+	  Default (n) uses UART RX interrupts + a ring buffer.
+
+source "Kconfig.zephyr"
