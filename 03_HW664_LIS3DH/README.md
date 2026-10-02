@@ -114,7 +114,7 @@ exclusively by core1).
 | VCC / GND | 3.3V / GND | everything | - |
 | CS (optional - unconnected works fine on this module) | - | HW-664 CS | - |
 | SDO/SA0 (optional - unconnected gives 0x19 on this module) | GND (0x18) or unconnected/HIGH (0x19) | HW-664 SDO | - |
-![Uploading image.png…]()
+
 
 **Lesson carried over from Lab 01/02**: after wiring up a new I2C
 device, scan it with `lab_tools/i2c0_scanner` before putting an address
