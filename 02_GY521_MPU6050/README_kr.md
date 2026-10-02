@@ -123,6 +123,7 @@ struct ipm_sensor_payload {
 | I2C1 SCL | GPIO5 | SSD1306 SCL | core1 |
 | VCC / GND | 3.3V / GND | 전부 | - |
 | AD0 | GND (또는 미연결) | GY-521 AD0 | - (0x68 고정용) |
+<img width="468" height="632" alt="image" src="https://github.com/user-attachments/assets/4ab180f4-d852-4572-9067-6e0d199e7ad3" />
 
 **Lab 01에서 얻은 관례**: 배선 직후, 오버레이에 주소를 넣기 전에
 `lab_tools/i2c0_scanner`로 먼저 실제 응답 주소를 확인할 것. 이 랩은 AD0을
